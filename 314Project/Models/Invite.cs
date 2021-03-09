@@ -9,10 +9,13 @@ namespace _314Project.Models
 {
     public class Invite
     {
+
         public int ID { get; set; }
 
+        [ForeignKey("UserId")]    //ICollection<Invite> in Games 
         [Display(Name = "Users")]
-        [ForeignKey("UsersID")]
-        public int UsersID { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
+        //public virtual ICollection<ApplicationUser> ApplicationUser { get; set; }//Allow Users to get Games FKID (Foreign key ID)
     }
 }

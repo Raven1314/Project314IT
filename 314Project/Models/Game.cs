@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace _314Project.Models
 {
-    public class Games
+    public class Game
     {
         public int ID { get; set; }
 
         [Display(Name = "Game")]
         public string GameName { get; set; }
-        public virtual ICollection<Users> Users { get; set; }//Allow Users to get Games FKID (Foreign key ID)
+        public virtual ICollection<ApplicationUser> ApplicationUser { get; set; }//Allow Users to get Games FKID (Foreign key ID)
 
     }
 }
