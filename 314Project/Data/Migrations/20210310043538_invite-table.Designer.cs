@@ -10,7 +10,7 @@ using _314Project.Data;
 namespace _314Project.Data.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20210309045708_invite-table")]
+    [Migration("20210310043538_invite-table")]
     partial class invitetable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,8 +168,8 @@ namespace _314Project.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Description")
-                        .HasColumnType("int");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -178,17 +178,11 @@ namespace _314Project.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("GameID")
+                    b.Property<int>("GameID")
                         .HasColumnType("int");
 
                     b.Property<string>("GameTag")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GamesID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("InviteID")
-                        .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -226,8 +220,6 @@ namespace _314Project.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GameID");
-
-                    b.HasIndex("InviteID");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -327,28 +319,26 @@ namespace _314Project.Data.Migrations
                 {
                     b.HasOne("_314Project.Models.Game", null)
                         .WithMany("ApplicationUser")
-                        .HasForeignKey("GameID");
-
-                    b.HasOne("_314Project.Models.Invite", null)
-                        .WithMany("ApplicationUser")
-                        .HasForeignKey("InviteID");
+                        .HasForeignKey("GameID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("_314Project.Models.Invite", b =>
                 {
                     b.HasOne("_314Project.Models.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Invite")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("_314Project.Models.Game", b =>
+            modelBuilder.Entity("_314Project.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Invite");
                 });
 
-            modelBuilder.Entity("_314Project.Models.Invite", b =>
+            modelBuilder.Entity("_314Project.Models.Game", b =>
                 {
                     b.Navigation("ApplicationUser");
                 });

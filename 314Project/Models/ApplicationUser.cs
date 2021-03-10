@@ -11,7 +11,7 @@ namespace _314Project.Models
     public class ApplicationUser : IdentityUser
     {
   
-        public int Description { get; set; }
+        public string Description { get; set; }
 
         [ForeignKey("GameID")] //ICollection<Users> in Games Model
         [Display(Name = "Games")]
