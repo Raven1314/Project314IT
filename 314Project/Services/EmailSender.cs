@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
-using AspNetCore;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
