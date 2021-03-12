@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using _314Project.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace _314Project.Areas.Identity.Pages.Account
 {
@@ -25,16 +27,23 @@ namespace _314Project.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+        private readonly ApplicationDBContext _context;//Get database from DBcontext
+        public IEnumerable<SelectListItem> GameList { get; set; }// Generate List
+
+
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDBContext context//make the database access available.
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;//make the database access available.
         }
 
         [BindProperty]
@@ -46,6 +55,11 @@ namespace _314Project.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            [Required]//adding username to the registration page
+            [Display(Name = "User name")]
+            [DataType(DataType.Text)]
+            public string UserName { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -61,11 +75,21 @@ namespace _314Project.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Display(Name = "GameTag")]
+            [DataType(DataType.Text)]
+            public string GameTag { get; set; }
+
+            [Display(Name = "Games")]
+            public int? GameID { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+
+            GameList = _context.Games.Select(x => new SelectListItem { Text = x.GameName.ToString(), Value = x.ID.ToString() }).ToList();//get list item in game table
+
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
@@ -75,7 +99,13 @@ namespace _314Project.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = Input.UserName,
+                    Email = Input.Email,
+                    GameTag = Input.GameTag,
+                    GameID = Input.GameID
+                };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

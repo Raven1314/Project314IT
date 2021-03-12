@@ -15,7 +15,7 @@ namespace _314Project.Models
 
         [ForeignKey("GameID")] //ICollection<Users> in Games Model
         [Display(Name = "Games")]
-        public int GameID { get; set; }
+        public int? GameID { get; set; }
 
         public string GameTag { get; set; }
 
