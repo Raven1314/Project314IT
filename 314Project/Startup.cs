@@ -33,21 +33,17 @@ namespace _314Project
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDatabaseDeveloperPageExceptionFilter();
-
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)//changed to application user
                 .AddEntityFrameworkStores<ApplicationDBContext>();
-            services.AddControllersWithViews();
-
             // requires
             // using Microsoft.AspNetCore.Identity.UI.Services;
             // using WebPWrecover.Services;
             services.AddTransient<IEmailSender, EmailSender>();//for email sender model
             services.Configure<AuthMessageSenderOptions>(Configuration);
-            
-            services.AddRazorPages();
 
+            services.AddDatabaseDeveloperPageExceptionFilter();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

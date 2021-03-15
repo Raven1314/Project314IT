@@ -28,12 +28,13 @@ namespace _314Project.Services
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("Service.Fruitz@gmail.com", Options.SendGridUser),
+                From = new EmailAddress("Service.Fruitz@gmail.com", "Fruitz"),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message
             };
             msg.AddTo(new EmailAddress(email));
+
             // Disable click tracking.
             // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
             msg.SetClickTracking(false, false);
