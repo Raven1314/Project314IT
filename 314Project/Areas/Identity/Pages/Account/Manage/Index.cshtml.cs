@@ -47,7 +47,6 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
             [DataType(DataType.Text)]
             public string Username { get; set; }
 
-            [Required]
             [EmailAddress]
             [Display(Name = "New email")]
             public string NewEmail { get; set; }
