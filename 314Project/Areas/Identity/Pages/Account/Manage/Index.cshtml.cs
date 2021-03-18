@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using _314Project.Data;
 using _314Project.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace _314Project.Areas.Identity.Pages.Account.Manage
@@ -20,15 +22,19 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
+        private readonly ApplicationDBContext _context;//Get database from DBcontext
+        public IEnumerable<SelectListItem> GameList { get; set; }// Generate List
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDBContext context
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
-
+            _context = context;
         }
 
         public string Email { get; set; }
@@ -47,6 +53,15 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
             [DataType(DataType.Text)]
             public string Username { get; set; }
 
+            [Display(Name = "GameTag")]
+            [DataType(DataType.Text)]
+            public string GameTag { get; set; }
+
+
+            [Display(Name = "Games")]
+            [DataType(DataType.Text)]
+            public int? GameID { get; set; }
+
             [EmailAddress]
             [Display(Name = "New email")]
             public string NewEmail { get; set; }
@@ -58,20 +73,23 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var email = await _userManager.GetEmailAsync(user);
 
-
             Input = new InputModel
             {
                 Username = userName,
                 NewEmail = email,
-
+                GameTag = user.GameTag, //get current data from application user 
+                GameID = user.GameID //get current data from application user 
             };
-
+            
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
 
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
+
+            GameList = _context.Games.Select(x => new SelectListItem { Text = x.GameName.ToString(), Value = x.ID.ToString() }).ToList();//get list item in game table
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -107,15 +125,29 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            if (Input.GameID != user.GameID)//insert new gameID and GameTag
+            {
+                user.GameID = Input.GameID;
+            }
+
+            if (Input.GameTag != user.GameTag)
+            {
+                user.GameTag = Input.GameTag;
+            }
+
+            await _userManager.UpdateAsync(user);//updata database
+
+
+
+
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }
-        /// <summary>
-        /// Change email
-        /// </summary>
-        /// <returns></returns>
+
+        
+        //Change email
         public async Task<IActionResult> OnPostChangeEmailAsync()
         {
             var user = await _userManager.GetUserAsync(User);
