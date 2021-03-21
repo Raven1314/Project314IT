@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace _314Project.Areas.Identity.Pages.Account.Manage
 {
@@ -24,6 +25,18 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
 
         private readonly ApplicationDBContext _context;//Get database from DBcontext
         public IEnumerable<SelectListItem> GameList { get; set; }// Generate List
+
+
+        //IEnumerable<ApplicationUser> Search(string SearchTerm); 
+
+
+
+        public IList<ApplicationUser> Search { get; set; }
+
+        [BindProperty(SupportsGet = true)]//binds form values and query strings with the same name as the property
+        public string SearchTerm { get; set; }//Get user input
+
+        
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -36,6 +49,8 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
             _emailSender = emailSender;
             _context = context;
         }
+
+
 
         public string Email { get; set; }
         public bool IsEmailConfirmed { get; set; }
@@ -68,6 +83,9 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
 
         }
 
+
+
+
         private async Task LoadAsync(ApplicationUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
@@ -95,6 +113,17 @@ namespace _314Project.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+
+            var search = from u in _context.ApplicationUser
+                         select u;
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                search = search.Where(s => s.UserName.Contains(SearchTerm));
+            }
+
+            Search = await search.ToListAsync();
+
+
 
             await LoadAsync(user);
             return Page();

@@ -4,10 +4,13 @@
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
     ViewData["ActivePage"] = ManageNavPages.Email;
-
+    ViewData["ShowButtons"] = true;
 }
 
 <h4>@ViewData["Title"]</h4>
+
+
+
 <partial name="_StatusMessage" model="Model.StatusMessage" />
 <div class="row">
     <div class="col-md-6">
@@ -38,7 +41,7 @@
             </div>
 
             <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>
-             
+
 
 
             <!--Update email section-->
@@ -67,7 +70,7 @@
             </div>
             <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary">Change email</button>
         </form>
-</div>
+    </div>
 </div>
 
 @section Scripts {
