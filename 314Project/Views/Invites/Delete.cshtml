@@ -1,0 +1,22 @@
+﻿@model _314Project.Models.Invite
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Areas/Identity/Pages/Account/_ViewImports.cshtml";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Invite</h4>
+    <hr />
+    <dl class="row">
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

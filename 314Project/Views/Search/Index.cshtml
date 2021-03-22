@@ -1,0 +1,59 @@
+﻿@page
+@model _314Project.Views.Search.IndexModel
+@{
+}
+<div class="text-center">
+    <h1 class="display-4"></h1>
+</div>
+
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Title: <input type="text" asp-for="SearchString" />
+            <input type="submit" value="Filter" />
+        </p>
+        </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationUser[0].UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationUser[0].GameID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationUser[0].GameTag)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationUser[0].Invite)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ApplicationUser)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GameTag)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GameID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Invite)
+                </td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

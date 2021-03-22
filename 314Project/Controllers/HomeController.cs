@@ -1,5 +1,7 @@
-﻿using _314Project.Models;
+﻿using _314Project.Data;
+using _314Project.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,11 @@ namespace _314Project.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+
+        }
+        public IActionResult Search()
         {
             return View();
         }

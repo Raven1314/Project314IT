@@ -30,12 +30,15 @@ namespace _314Project
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDBContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+           
+            services.AddDbContext<ApplicationDBContext>(
+                options => options.UseSqlServer(
+                    "<DefaultConnection>",//connection string
+                    providerOptions => providerOptions.EnableRetryOnFailure()));//re-try connection when fails
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)//changed to application user
                 .AddEntityFrameworkStores<ApplicationDBContext>();
+
             // requires
             // using Microsoft.AspNetCore.Identity.UI.Services;
             // using WebPWrecover.Services;
