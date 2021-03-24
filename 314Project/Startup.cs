@@ -30,11 +30,26 @@ namespace _314Project
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
-            services.AddDbContext<ApplicationDBContext>(
+
+            /*services.AddDbContext<ApplicationDBContext>(
                 options => options.UseSqlServer(
                     "<DefaultConnection>",//connection string
-                    providerOptions => providerOptions.EnableRetryOnFailure()));//re-try connection when fails
+                    providerOptions => providerOptions.EnableRetryOnFailure()));*/ //re-try connection when fails
+
+            //services.AddDbContext<ApplicationDBContext>(options =>
+               // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<ApplicationDBContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                sqlServerOptionsAction: sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(//re-try connection when fails
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null);
+                });
+            });
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)//changed to application user
                 .AddEntityFrameworkStores<ApplicationDBContext>();
@@ -44,6 +59,8 @@ namespace _314Project
             // using WebPWrecover.Services;
             services.AddTransient<IEmailSender, EmailSender>();//for email sender model
             services.Configure<AuthMessageSenderOptions>(Configuration);
+
+            services.AddHttpContextAccessor();
 
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews();

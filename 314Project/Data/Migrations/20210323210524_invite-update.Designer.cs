@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _314Project.Data;
 
 namespace _314Project.Data.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210323210524_invite-update")]
+    partial class inviteupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -315,11 +317,9 @@ namespace _314Project.Data.Migrations
 
             modelBuilder.Entity("_314Project.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("_314Project.Models.Game", "Game")
+                    b.HasOne("_314Project.Models.Game", null)
                         .WithMany("ApplicationUser")
                         .HasForeignKey("GameID");
-
-                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("_314Project.Models.Invite", b =>

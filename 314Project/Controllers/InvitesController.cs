@@ -6,12 +6,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _314Project.Data;
+using _314Project.Models;
 
-namespace _314Project.Models
+namespace _314Project.Controllers
 {
     public class InvitesController : Controller
     {
         private readonly ApplicationDBContext _context;
+
+        public List<SelectListItem> GetUsers()
+        {
+            var UserList = _context.ApplicationUser;
+            var UserInfo = new List<SelectListItem>();//Array
+            foreach (ApplicationUser u in UserList)//All User rows
+            {
+                UserInfo.Add(new SelectListItem
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.GameID + " " + u.GameTag
+
+                });
+            }
+            return UserInfo;
+        }
 
         public InvitesController(ApplicationDBContext context)
         {
@@ -21,6 +38,22 @@ namespace _314Project.Models
         // GET: Invites
         public async Task<IActionResult> Index()
         {
+            ViewBag.InviteList = new List<String>();
+            ViewBag.InviteList2 = new List<String>();
+
+
+            var invites = await _context.Invites.AsNoTracking().Include(e => e.User.Game).ToListAsync();
+
+            //NOTE: this can contain duplicate strings added to `InviteList`, unless you 
+            //include more data field in each item.
+            foreach (Invite i in invites)
+            {
+                ViewBag.InviteList.Add(i.User.Game.GameName);
+                ViewBag.InviteList2.Add(i.User.GameTag);
+
+            }
+
+
             return View(await _context.Invites.ToListAsync());
         }
 
@@ -45,6 +78,7 @@ namespace _314Project.Models
         // GET: Invites/Create
         public IActionResult Create()
         {
+            ViewBag.UsersID = GetUsers();
             return View();
         }
 

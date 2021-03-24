@@ -17,6 +17,8 @@ namespace _314Project.Models
         [Display(Name = "Games")]
         public int? GameID { get; set; }
 
+        public Game Game { get; set; }
+
         public string GameTag { get; set; }
 
         public virtual ICollection<Invite> Invite { get; set; }

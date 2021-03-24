@@ -1,6 +1,8 @@
 ﻿@page
 @model _314Project.Views.Search.IndexModel
 @{
+    ViewData["Title"] = "Index";
+    
 }
 <div class="text-center">
     <h1 class="display-4"></h1>
@@ -13,7 +15,7 @@
             Title: <input type="text" asp-for="SearchString" />
             <input type="submit" value="Filter" />
         </p>
-        </div>
+    </div>
 </form>
 
 <table class="table">

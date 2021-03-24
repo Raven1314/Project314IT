@@ -12,10 +12,8 @@ namespace _314Project.Models
 
         public int ID { get; set; }
 
-        [ForeignKey("UserId")]    //ICollection<Invite> in Games 
+        [ForeignKey("UserId")]    //ICollection<Invite> in User 
         [Display(Name = "Users")]
         public virtual ApplicationUser User { get; set; }
-
-        //public virtual ICollection<ApplicationUser> ApplicationUser { get; set; }//Allow Users to get Games FKID (Foreign key ID)
     }
 }
