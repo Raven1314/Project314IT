@@ -7,50 +7,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _314Project.Data;
 using _314Project.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace _314Project.Controllers
 {
-    public class InvitesController : Controller
+    public class MessagesController : Controller
     {
         private readonly ApplicationDBContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public InvitesController(ApplicationDBContext context)
+
+        public MessagesController(ApplicationDBContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
-        }
-        public List<SelectListItem> GetUsers()
-        {
-            var UserList = _context.ApplicationUser;
-            var UserInfo = new List<SelectListItem>();//Array
-            foreach (ApplicationUser u in UserList)//All User rows
-            {
-                UserInfo.Add(new SelectListItem
-                {
-                    Value = u.Id.ToString(),
-                    Text = u.GameID + " " + u.GameTag
+            _userManager = userManager;
 
-                });
-            }
-            return UserInfo;
         }
-        // GET: Invites
+
+        // GET: Messages
         public async Task<IActionResult> Index()
         {
-            ViewBag.InviteList = new List<String>();
-            ViewBag.InviteList2 = new List<String>();
+            var currentUser = await _userManager.GetUserAsync(User);
 
-            var invites = await _context.Invites.AsNoTracking().Include(e => e.User.Game).ToListAsync();
-            foreach(Invite i in invites)
+            if (User.Identity.IsAuthenticated)
             {
-                ViewBag.InviteList.Add(i.User.Game.GameName);
-                ViewBag.InviteList2.Add(i.User.GameTag);
+                ViewBag.CurrentUserName = currentUser.UserName;
+
             }
 
+            var messages = await _context.Messages.ToListAsync();
 
-            return View(await _context.Invites.ToListAsync());
+            var applicationDBContext = _context.Messages.Include(m => m.Sender);
+
+            return View(await applicationDBContext.ToListAsync());
         }
 
-        // GET: Invites/Details/5
+        // GET: Messages/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -58,39 +50,49 @@ namespace _314Project.Controllers
                 return NotFound();
             }
 
-            var invite = await _context.Invites
+            var message = await _context.Messages
+                .Include(m => m.Sender)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (invite == null)
+            if (message == null)
             {
                 return NotFound();
             }
 
-            return View(invite);
+            return View(message);
         }
 
-        // GET: Invites/Create
+        // GET: Messages/Create
         public IActionResult Create()
         {
+            ViewData["UserID"] = new SelectList(_context.ApplicationUser, "Id", "Id");
             return View();
         }
 
-        // POST: Invites/Create
+        // POST: Messages/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID")] Invite invite)
+        public async Task<IActionResult> Create([Bind("ID,UserName,Text,When,UserID")] Message message)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(invite);
+                message.UserName = User.Identity.Name;
+                var sender = await _userManager.GetUserAsync(User);
+                message.UserID = sender.Id;
+                await _context.Messages.AddAsync(message);
+
+                //_context.Add(message);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+
+                return Ok();
             }
-            return View(invite);
+            //ViewData["UserID"] = new SelectList(_context.ApplicationUser, "Id", "Id", message.UserID);
+            return View(message);
         }
 
-        // GET: Invites/Edit/5
+        // GET: Messages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -98,22 +100,23 @@ namespace _314Project.Controllers
                 return NotFound();
             }
 
-            var invite = await _context.Invites.FindAsync(id);
-            if (invite == null)
+            var message = await _context.Messages.FindAsync(id);
+            if (message == null)
             {
                 return NotFound();
             }
-            return View(invite);
+            ViewData["UserID"] = new SelectList(_context.ApplicationUser, "Id", "Id", message.UserID);
+            return View(message);
         }
 
-        // POST: Invites/Edit/5
+        // POST: Messages/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID")] Invite invite)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,UserName,Text,When,UserID")] Message message)
         {
-            if (id != invite.ID)
+            if (id != message.ID)
             {
                 return NotFound();
             }
@@ -122,12 +125,12 @@ namespace _314Project.Controllers
             {
                 try
                 {
-                    _context.Update(invite);
+                    _context.Update(message);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InviteExists(invite.ID))
+                    if (!MessageExists(message.ID))
                     {
                         return NotFound();
                     }
@@ -138,10 +141,11 @@ namespace _314Project.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(invite);
+            ViewData["UserID"] = new SelectList(_context.ApplicationUser, "Id", "Id", message.UserID);
+            return View(message);
         }
 
-        // GET: Invites/Delete/5
+        // GET: Messages/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -149,30 +153,31 @@ namespace _314Project.Controllers
                 return NotFound();
             }
 
-            var invite = await _context.Invites
+            var message = await _context.Messages
+                .Include(m => m.Sender)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (invite == null)
+            if (message == null)
             {
                 return NotFound();
             }
 
-            return View(invite);
+            return View(message);
         }
 
-        // POST: Invites/Delete/5
+        // POST: Messages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var invite = await _context.Invites.FindAsync(id);
-            _context.Invites.Remove(invite);
+            var message = await _context.Messages.FindAsync(id);
+            _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InviteExists(int id)
+        private bool MessageExists(int id)
         {
-            return _context.Invites.Any(e => e.ID == id);
+            return _context.Messages.Any(e => e.ID == id);
         }
     }
 }

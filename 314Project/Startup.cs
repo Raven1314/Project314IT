@@ -1,4 +1,5 @@
 using _314Project.Data;
+using _314Project.Hubs;
 using _314Project.Models;
 using _314Project.Services;
 using Microsoft.AspNetCore.Builder;
@@ -53,6 +54,9 @@ namespace _314Project
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)//changed to application user
                 .AddEntityFrameworkStores<ApplicationDBContext>();
+            services.AddSignalR();
+    
+
 
             // requires
             // using Microsoft.AspNetCore.Identity.UI.Services;
@@ -64,6 +68,7 @@ namespace _314Project
 
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,6 +99,7 @@ namespace _314Project
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<ChatHub>("/ChatHub");
             });
         }
     }

@@ -18,12 +18,16 @@ namespace _314Project.Data
         public DbSet<Game> Games { get; set; }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
         public DbSet<Invite> Invites { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+            builder.Entity<Message>()
+                .HasOne<ApplicationUser>(a => a.Sender)
+                .WithMany(d => d.Messages)
+                .HasForeignKey(d => d.UserID);
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using _314Project.Data;
 using _314Project.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,9 +16,15 @@ namespace _314Project.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDBContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        public HomeController(ILogger<HomeController> logger,
+            ApplicationDBContext context,
+            UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
+            _userManager = userManager;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -36,6 +43,19 @@ namespace _314Project.Controllers
         }
         public IActionResult Invites()
         {
+            return View();
+        }
+        public IActionResult Messages()
+        {
+            return View();
+        }
+        public async Task <IActionResult> Chat()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            ViewBag.CurrentUserName = currentUser.UserName;
+
+            var messages = await _context.Messages.ToListAsync();
             return View();
         }
 

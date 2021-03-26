@@ -16,12 +16,17 @@ namespace _314Project.Models
         [ForeignKey("GameID")] //ICollection<Users> in Games Model
         [Display(Name = "Games")]
         public int? GameID { get; set; }
-
         public Game Game { get; set; }
-
         public string GameTag { get; set; }
 
         public virtual ICollection<Invite> Invite { get; set; }
+
+        public ApplicationUser()
+        {
+            Messages = new HashSet<Message>();
+        }
+        public virtual ICollection<Message> Messages { get; set; }
+
 
 
     }
