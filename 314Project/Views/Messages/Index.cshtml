@@ -13,6 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Fruitz</title>
     <link rel="stylesheet" href="~/css/site.css" />
+
 </head>
 <body>
     <header>
@@ -30,9 +31,6 @@
                         </li>
                         <li class="nav-item active">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Chat">Chat</a>
                         </li>
                         <li class="nav-item active">
                             <a class="nav-link" asp-area="" asp-controller="Messages" asp-action="">Public Chat</a>
@@ -126,8 +124,8 @@
 
     <script scr="~/signalr/signalr.min.js"></script>
     <script scr="~/lib/jquery/dist/jquery.validate.unobtrusive-ajax.min.js"></script>
-    <script scr="~/js/signrReqHandler.js"></script>
     <script scr="~/chat.js"></script>
+    <script scr="~/js/signrReqHandler.js"></script>
 
 
     <footer class="border-top footer text-muted">
@@ -135,6 +133,8 @@
             &copy; 2021 - _314Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>

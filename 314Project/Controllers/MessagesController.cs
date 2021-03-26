@@ -84,9 +84,8 @@ namespace _314Project.Controllers
 
                 //_context.Add(message);
                 await _context.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
 
-                return Ok();
             }
             //ViewData["UserID"] = new SelectList(_context.ApplicationUser, "Id", "Id", message.UserID);
             return View(message);

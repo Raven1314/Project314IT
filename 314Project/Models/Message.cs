@@ -17,5 +17,9 @@ namespace _314Project.Models
         public string UserID { get; set; }
 
         public virtual ApplicationUser Sender { get; set; }
+        public Message()
+        {
+            When = DateTime.Now;
+        }
     }
 }
